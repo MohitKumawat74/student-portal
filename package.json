@@ -6,7 +6,7 @@
   "author": "Mohit Kumawat",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "node init && nodemon server.js"
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",
