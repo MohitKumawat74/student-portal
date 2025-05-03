@@ -1,6 +1,6 @@
 const Stu = require('../models/stu');
 const Message = require('../models/message');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 
 // Home Page
 exports.stuhome = (req, res) => {
