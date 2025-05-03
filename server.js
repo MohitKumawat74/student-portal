@@ -15,7 +15,7 @@ app.use(session({
     secret: "secret-key",
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: false, maxAge: 1000 * 60 * 60 } // 1-hour session
+    cookie: { secure: true, maxAge: 1000 * 60 * 60 } // 1-hour session
 }));
 
 // ✅ Fix: Make session available in views
@@ -32,7 +32,7 @@ mongoose.connect(process.env.MONGO_URI, {
     .catch(err => console.log("❌ MongoDB Connection Error:", err));
 
 // Middleware
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public"))); // ✅ Ensure static files work
 app.set("view engine", "ejs");
