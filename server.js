@@ -5,6 +5,8 @@ const frontendRoute = require("./router/frontendRoutes");
 const authRoute = require("./router/authRoutes");
 const adminRoutes = require('./router/admin');
 const path = require("path");
+require('dotenv').config();
+
 
 const app = express();
 
@@ -23,7 +25,8 @@ app.use((req, res, next) => {
 });
 
 // ✅ Fix: Connect to MongoDB
-mongoose.connect("mongodb+srv://mohitkumawat74:888mohit@cluster0.azdn6.mongodb.net/Backend", {    useNewUrlParser: true,
+mongoose.connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
     useUnifiedTopology: true
 }).then(() => console.log("✅ MongoDB Connected"))
     .catch(err => console.log("❌ MongoDB Connection Error:", err));
