@@ -23,8 +23,7 @@ app.use((req, res, next) => {
 });
 
 // ✅ Fix: Connect to MongoDB
-mongoose.connect("mongodb://127.0.0.1:27017/Backend", {
-    useNewUrlParser: true,
+mongoose.connect("mongodb+srv://mohitkumawat74:888mohit@cluster0.azdn6.mongodb.net/Backend", {    useNewUrlParser: true,
     useUnifiedTopology: true
 }).then(() => console.log("✅ MongoDB Connected"))
     .catch(err => console.log("❌ MongoDB Connection Error:", err));
