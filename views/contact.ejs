@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+</head>
+<body>
+    <%- include('partials/navbar3') %>
+
+<div class="container mt-4">
+  <!-- Hero Section -->
+  <div class="hero-section text-center" id="contactsection">
+    <h1>Contact Us</h1>
+    <p class="contactp">We'd love to hear from you! Reach out to us with any queries or feedback.</p>
+    <div class="contactimg"></div>
+  </div>
+
+  <!-- Contact Form Section -->
+  <div class="row mt-4 d-flex justify-content-center">
+    <div class="col-md-6 contact-form" id="contactform">
+      <form id="contactForm" action="">
+        <div class="mb-3">
+          <label for="name" class="form-label">Name</label>
+          <input type="text" id="name" class="form-control" required>
+        </div>
+        <div class="mb-3">
+          <label for="email" class="form-label">Email</label>
+          <input type="email" id="email" class="form-control" required>
+        </div>
+        <div class="mb-3">
+          <label for="message" class="form-label">Message</label>
+          <textarea id="message" class="form-control" rows="4" required></textarea>
+        </div>
+        <a href="/message"><button type="submit" class="btn btn-primary w-100">Send Message</button></a>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer-container text-center">
+    <p>&copy; <%= new Date().getFullYear() %> Student Portal | All Rights Reserved</p>
+  </div>
+</footer>
+<script>
+  $(document).ready(function () {
+      $("#contactForm").submit(function (event) {
+          event.preventDefault(); // Prevent default form submission
+
+          let name = $("#name").val().trim();
+          let email = $("#email").val().trim();
+          let message = $("#message").val().trim();
+
+          if (name && email && message) {
+              $.ajax({
+                  url: "/message", // Ensure backend route exists
+                  type: "POST",
+                  contentType: "application/json",
+                  data: JSON.stringify({ name, email, message }),
+                  success: function (response) {
+                      if (response.success) {
+                          showSuccessMessage("Message sent successfully!");
+
+                          // Clear form fields
+                          $("#name, #email, #message").val("");
+
+                          // Redirect to message page after a short delay
+                          setTimeout(function () {
+                              window.location.href = "/newmessage"; 
+                          }, 2000); // 2-second delay before redirection
+                      } else {
+                          showErrorMessage("Failed to send message. Please try again.");
+                      }
+                  },
+                  error: function (xhr) {
+                      let errorMessage = "Server error. Try again later.";
+                      if (xhr.responseJSON && xhr.responseJSON.message) {
+                          errorMessage = xhr.responseJSON.message;
+                      }
+                      showErrorMessage(errorMessage);
+                  }
+              });
+          } else {
+              showErrorMessage("All fields are required!");
+          }
+      });
+
+      function showSuccessMessage(text) {
+          $(".contact-form").append('<div class="alert alert-success mt-3" id="successMessage">' + text + '</div>');
+          gsap.from("#successMessage", { opacity: 0, y: -10, duration: 0.5, ease: "power2.out" });
+          setTimeout(removeMessage, 3000);
+      }
+
+      function showErrorMessage(text) {
+          $(".contact-form").append('<div class="alert alert-danger mt-3" id="errorMessage">' + text + '</div>');
+          gsap.from("#errorMessage", { opacity: 0, y: -10, duration: 0.5, ease: "power2.out" });
+          setTimeout(removeMessage, 3000);
+      }
+
+      function removeMessage() {
+          $(".alert").fadeOut("slow", function () {
+              $(this).remove();
+          });
+      }
+  });
+</script>
+
+<script>
+    gsap.from(".hero-section", { opacity: 0, y: -20, duration: 1, ease: "power2.out" });
+    gsap.from(".contact-form", { opacity: 0, y: 20, duration: 1, delay: 0.5, ease: "power2.out" });
+</script>
+
+</body>
+</html>
