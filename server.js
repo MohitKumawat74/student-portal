@@ -15,7 +15,7 @@ app.use(session({
     secret: "secret-key",
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: true, maxAge: 1000 * 60 * 60 } // 1-hour session
+    cookie: { secure: process.env.NODE_ENV === "production", maxAge: 1000 * 60 * 60 } // 1-hour session
 }));
 
 // ✅ Fix: Make session available in views

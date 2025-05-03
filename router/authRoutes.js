@@ -17,11 +17,13 @@ router.post("/register", async (req, res) => {
             return res.render("insertform", { errorMessage: "All fields are required." });
         }
 
+        // Check if user already exists
         const existingUser = await User.findOne({ StuEmail: email });
         if (existingUser) {
             return res.render("insertform", { errorMessage: "Email already exists. Please login." });
         }
 
+        // Hash password and save new user
         const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = new User({
             StuName: name,
@@ -32,12 +34,16 @@ router.post("/register", async (req, res) => {
         });
 
         await newUser.save();
-        res.redirect("/login");
+        setTimeout(() => {
+            alert("user registeration successfull")
+        }, 1000);
+        res.redirect("/login");  // Redirect after successful registration
     } catch (error) {
-        console.error(error);
-        res.redirect("/register");
+        console.error("Error during registration:", error);  // Log error to console
+        res.render("insertform", { errorMessage: "Something went wrong. Please try again later." });
     }
 });
+
 
 // Login Route
 router.get("/login", (req, res) => {
