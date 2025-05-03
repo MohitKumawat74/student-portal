@@ -4,27 +4,33 @@ const User = require("../models/stu");
 
 const router = express.Router();
 
-// Registration Route
+// 🚀 GET: Registration Page
 router.get("/register", (req, res) => {
     res.render("insertform", { errorMessage: null });
 });
 
+// 🚀 POST: Handle Student Registration
 router.post("/register", async (req, res) => {
     try {
         const { name, email, age, fees, password } = req.body;
 
+        // ✅ Validation
         if (!name || !email || !age || !fees || !password) {
-            return res.render("insertform", { errorMessage: "All fields are required." });
+            return res.render("insertform", { errorMessage: "⚠️ All fields are required." });
         }
 
-        // Check if user already exists
+        // ✅ Check if Email Already Exists
         const existingUser = await User.findOne({ StuEmail: email });
         if (existingUser) {
-            return res.render("insertform", { errorMessage: "Email already exists. Please login." });
+            return res.render("insertform", {
+                errorMessage: "⚠️ Email already registered. Please login."
+            });
         }
 
-        // Hash password and save new user
+        // ✅ Hash Password
         const hashedPassword = await bcrypt.hash(password, 10);
+
+        // ✅ Create & Save User
         const newUser = new User({
             StuName: name,
             StuEmail: email,
@@ -34,50 +40,55 @@ router.post("/register", async (req, res) => {
         });
 
         await newUser.save();
-        setTimeout(() => {
-            alert("user registeration successfull")
-        }, 1000);
-        res.redirect("/login");  // Redirect after successful registration
+
+        // ✅ Flash Success (can also use session flash messages)
+        res.render("login", { errorMessage: "✅ Registration successful. Please login." });
+
     } catch (error) {
-        console.error("Error during registration:", error);  // Log error to console
-        res.render("insertform", { errorMessage: "Something went wrong. Please try again later." });
+        console.error("❌ Error during registration:", error);
+        res.render("insertform", { errorMessage: "❌ Server error. Please try again later." });
     }
 });
 
-
-// Login Route
+// 🚀 GET: Login Page
 router.get("/login", (req, res) => {
     res.render("login", { errorMessage: null });
 });
 
+// 🚀 POST: Handle Login Logic
 router.post("/login", async (req, res) => {
     try {
         const { email, password } = req.body;
 
+        // ✅ Find user
         const user = await User.findOne({ StuEmail: email });
         if (!user) {
-            return res.render("login", { errorMessage: "Invalid email or password." });
+            return res.render("login", { errorMessage: "❌ Invalid email or password." });
         }
 
+        // ✅ Compare passwords
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            return res.render("login", { errorMessage: "Invalid email or password." });
+            return res.render("login", { errorMessage: "❌ Invalid email or password." });
         }
 
+        // ✅ Set session
         req.session.user = {
             id: user._id,
             name: user.StuName,
             email: user.StuEmail
         };
 
+        // ✅ Redirect to home/dashboard
         res.redirect("/");
+
     } catch (error) {
-        console.error(error);
-        res.redirect("/login");
+        console.error("❌ Login error:", error);
+        res.render("login", { errorMessage: "❌ Server error. Please try again later." });
     }
 });
 
-// Logout Route
+// 🚀 GET: Logout
 router.get("/logout", (req, res) => {
     req.session.destroy(() => {
         res.redirect("/login");
